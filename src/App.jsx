@@ -79,7 +79,7 @@ const heroImages = [
 const colecoes = [
   {
     title: "Clássicos Premium",
-    tag: "Best‑seller",
+    tag: "Best-seller",
     img: "/placeholder/colecao-1.jpg",
     desc: "Jalecos sob medida com caimento impecável e tecidos resistentes.",
   },
@@ -286,7 +286,7 @@ function Colecoes() {
         <SectionTitle
           eyebrow="Catálogo"
           title="Coleções que definem sua presença"
-          desc="Um catálogo com experiência de e‑commerce, mantendo foco institucional e consultivo."
+          desc="Um catálogo com experiência de e-commerce, mantendo foco institucional e consultivo."
         />
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {colecoes.map((c, i) => (
