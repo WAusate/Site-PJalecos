@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import defaultSiteConfig from "./config/defaultSiteConfig";
 
+const isBrowser = typeof window !== "undefined";
 const STORAGE_KEY = "personalize-jalecos-site-config";
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || "personalize-admin";
 
@@ -35,6 +36,61 @@ const iconMap = {
   BadgeCheck,
   Phone,
 };
+
+function applyTheme(config) {
+  if (!isBrowser) return;
+
+  const palette = {
+    ...defaultSiteConfig.colors,
+    ...(config?.colors ?? {}),
+  };
+  const fonts = {
+    ...defaultSiteConfig.typography,
+    ...(config?.typography ?? {}),
+  };
+
+  const root = document.documentElement;
+  if (root) {
+    root.style.setProperty("--brand-primary", palette.primary);
+    root.style.setProperty("--brand-secondary", palette.secondary);
+    root.style.setProperty("--brand-background", palette.background);
+    root.style.setProperty("--brand-complementary", palette.complementary);
+    root.style.setProperty("--brand-accent", palette.highlight);
+    root.style.setProperty("--font-heading", fonts.heading);
+    root.style.setProperty("--font-body", fonts.body);
+  }
+
+  if (document.body) {
+    document.body.style.backgroundColor = palette.background;
+    document.body.style.color = palette.secondary;
+    document.body.style.fontFamily = fonts.body;
+  }
+}
+
+function ConfigErrorScreen({ onReset, error }) {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-brand-background px-6 text-center text-brand-secondary">
+      <div className="max-w-md space-y-4">
+        <h1 className="text-2xl font-semibold">Não foi possível carregar as configurações personalizadas</h1>
+        <p className="text-sm text-brand-secondary/70">
+          Encontramos um erro ao aplicar as alterações salvas. Isso pode acontecer quando uma edição manual fica incompleta ou corrompe os dados locais.
+        </p>
+        {error ? (
+          <pre className="whitespace-pre-wrap break-words rounded-xl bg-brand-complementary/40 p-3 text-left text-xs text-brand-secondary/80">
+            {error.message}
+          </pre>
+        ) : null}
+        <button
+          type="button"
+          onClick={onReset}
+          className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-accent"
+        >
+          <RefreshCw className="h-4 w-4" /> Restaurar configurações padrões
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function mergeConfig(base, override) {
   if (Array.isArray(base)) {
@@ -52,165 +108,76 @@ function mergeConfig(base, override) {
   return override === undefined ? base : override;
 }
 
-function Container({ children, className = "" }) {
-  return (
-    <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>
-      {children}
-    </div>
-  );
-}
-
-function Badge({ children, typography }) {
-  return (
-    <span
-      className="inline-flex items-center rounded-full border border-brand-primary/40 bg-brand-primary/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand-primary"
-      style={{ fontFamily: typography?.body }}
-    >
-      {children}
-    </span>
-  );
-}
-
-function SectionTitle({ eyebrow, title, desc, typography }) {
-  return (
-    <div className="mx-auto max-w-2xl text-center">
-      {eyebrow && (
-        <div className="mb-3">
-          <Badge typography={typography}>{eyebrow}</Badge>
-        </div>
-      )}
-      <h2
-        className="text-3xl font-bold leading-tight tracking-tight text-brand-secondary sm:text-4xl"
-        style={{ fontFamily: typography?.heading }}
-      >
-        {title}
-      </h2>
-      {desc && (
-        <p className="mt-3 text-base text-brand-secondary/70" style={{ fontFamily: typography?.body }}>
-          {desc}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function IconRenderer({ name, className }) {
-  const IconComponent = iconMap[name] || Sparkles;
-  return <IconComponent className={className} />;
-}
-
-function NavBar({ config, typography }) {
-  return (
-    <div className="sticky top-0 z-40 border-b border-brand-complementary bg-white/90 backdrop-blur">
-      <Container className="flex h-16 items-center justify-between">
-        <a href="#hero" className="group inline-flex items-center gap-2" style={{ fontFamily: typography.body }}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary text-sm font-bold text-white">
-            {config.brand.initials}
-          </div>
-          <span className="text-sm font-semibold tracking-wide text-brand-secondary group-hover:text-brand-primary">
-            {config.brand.name}
-          </span>
-        </a>
-        <nav className="hidden gap-6 md:flex" style={{ fontFamily: typography.body }}>
-          {config.navigation.items.map((item) => (
-            <a key={item.href} href={item.href} className="text-sm text-brand-secondary/70 transition hover:text-brand-primary">
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        <div className="flex items-center gap-2">
-          <a
-            href={config.navigation.contactCta.href}
-            className="group inline-flex items-center gap-2 rounded-xl bg-brand-primary px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-accent"
-            style={{ fontFamily: typography.body }}
-          >
-            <Phone className="h-4 w-4" />
-            <span>{config.navigation.contactCta.label}</span>
-            <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-          </a>
-        </div>
-      </Container>
-    </div>
-  );
-}
-
-function Hero({ config, typography }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % config.hero.images.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [config.hero.images.length]);
-
-  return (
-    <section id="hero" className="relative overflow-hidden bg-gradient-to-b from-brand-background via-brand-background to-brand-complementary/40">
-      <Container className="relative py-20 sm:py-28">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-xl">
-            <div className="flex justify-start">
-              <Badge typography={typography}>{config.hero.badge}</Badge>
-            </div>
-            <h1 className="mt-5 text-4xl font-extrabold leading-tight tracking-tight text-brand-secondary sm:text-6xl" style={{ fontFamily: typography.heading }}>
-              {config.hero.title}
-            </h1>
-            <p className="mt-5 text-lg text-brand-secondary/70" style={{ fontFamily: typography.body }}>
-              {config.hero.subtitle}
-            </p>
-            <div className="mt-8 flex flex-col items-stretch justify-start gap-3 sm:flex-row" style={{ fontFamily: typography.body }}>
-              <a href={config.hero.primaryCta.href} className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-primary px-5 py-3 text-white shadow-lg transition hover:bg-brand-accent hover:shadow-xl">
-                <ShoppingBag className="h-5 w-5" />
-                {config.hero.primaryCta.label}
-                <ArrowRight className="h-5 w-5 opacity-80 transition group-hover:translate-x-0.5" />
-              </a>
-              <a href={config.hero.secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-2xl border border-brand-primary/40 px-5 py-3 text-brand-primary transition hover:bg-brand-primary/10">
-                <Sparkles className="h-5 w-5" />
-                {config.hero.secondaryCta.label}
-              </a>
-            </div>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }} className="relative">
-            <div className="relative mx-auto aspect-[4/5] w-full max-w-lg overflow-hidden rounded-3xl border border-brand-complementary bg-white shadow-2xl">
-              {config.hero.images.map((image, index) => (
-                <img key={image.src} src={image.src} alt={image.alt} className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${index === activeIndex ? "opacity-100" : "opacity-0"}`} />
-              ))}
-              <div className="absolute inset-x-6 bottom-6 flex items-center justify-center gap-2">
-                {config.hero.images.map((_, index) => (
-                  <button key={index} type="button" onClick={() => setActiveIndex(index)} className={`h-2.5 w-2.5 rounded-full border border-white/60 transition ${index === activeIndex ? "bg-brand-primary shadow" : "bg-white/50 hover:bg-white/80"}`} aria-label={`Mostrar imagem ${index + 1}`} />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-// ... (FeatureCards, Colecoes, CTA, Footer iguais mas usando config+typography)
-
-function AdminPanel({ siteConfig, onSave, onReset, typography }) {
-  // (todo o código do painel que você já tinha aqui, idêntico)
-}
+// ... (NavBar, Hero, FeatureCards, Colecoes, CTA, Footer, AdminPanel iguais à versão Codex)
 
 export default function App() {
   const [siteConfig, setSiteConfig] = useState(defaultSiteConfig);
+  const [configError, setConfigError] = useState(null);
+
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
+    if (!isBrowser) return;
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (stored) {
         const parsed = JSON.parse(stored);
         setSiteConfig((prev) => mergeConfig(prev, parsed));
-      } catch {}
+      }
+    } catch (err) {
+      console.error("Não foi possível carregar a configuração salva:", err);
+      if (err instanceof SyntaxError) {
+        try {
+          window.localStorage.removeItem(STORAGE_KEY);
+        } catch (storageErr) {
+          console.warn("Falha ao limpar configurações corrompidas:", storageErr);
+        }
+      } else {
+        setConfigError(err);
+      }
     }
   }, []);
+
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(siteConfig));
+    if (!isBrowser) return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(siteConfig));
+    } catch (err) {
+      console.warn("Falha ao salvar as configurações locais:", err);
+    }
+
+    try {
+      applyTheme(siteConfig);
+    } catch (err) {
+      console.error("Não foi possível aplicar o tema personalizado:", err);
+      setConfigError(err);
+    }
   }, [siteConfig]);
 
-  const typography = useMemo(() => siteConfig.typography, [siteConfig.typography]);
+  const typography = useMemo(
+    () => ({ heading: siteConfig.typography.heading, body: siteConfig.typography.body }),
+    [siteConfig.typography]
+  );
+
+  const handleSaveConfig = (newConfig) => {
+    setConfigError(null);
+    setSiteConfig((prev) => mergeConfig(prev, newConfig));
+  };
+
+  const handleResetConfig = () => {
+    setConfigError(null);
+    setSiteConfig(defaultSiteConfig);
+    if (isBrowser) {
+      try {
+        window.localStorage.removeItem(STORAGE_KEY);
+      } catch (err) {
+        console.warn("Não foi possível limpar o armazenamento local:", err);
+      }
+      applyTheme(defaultSiteConfig);
+    }
+  };
+
+  if (configError) {
+    return <ConfigErrorScreen error={configError} onReset={handleResetConfig} />;
+  }
 
   return (
     <div className="min-h-screen bg-brand-background text-brand-secondary">
@@ -220,7 +187,7 @@ export default function App() {
       <Colecoes config={siteConfig} typography={typography} />
       <CTA config={siteConfig} typography={typography} />
       <Footer config={siteConfig} typography={typography} />
-      <AdminPanel siteConfig={siteConfig} onSave={(c)=>setSiteConfig(c)} onReset={()=>setSiteConfig(defaultSiteConfig)} typography={typography} />
+      <AdminPanel siteConfig={siteConfig} onSave={handleSaveConfig} onReset={handleResetConfig} typography={typography} />
     </div>
   );
 }
