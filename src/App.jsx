@@ -1,18 +1,37 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Shirt, Sparkles, ShieldCheck, Truck, ChevronRight, ChevronDown, Instagram, Facebook, Phone, Mail, MapPin, ArrowRight, BadgeCheck, Wand2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ShoppingBag,
+  Shirt,
+  Sparkles,
+  ShieldCheck,
+  Truck,
+  ChevronRight,
+  Instagram,
+  Facebook,
+  Phone,
+  Mail,
+  MapPin,
+  ArrowRight,
+  BadgeCheck,
+  Wand2,
+} from "lucide-react";
 
 /**
- * Versão inicial restaurada do site institucional com vibe e-commerce.
+ * Versão com identidade visual "Personalize Jalecos".
  */
 
 function Container({ children, className = "" }) {
-  return <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>{children}</div>;
+  return (
+    <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 ${className}`}>
+      {children}
+    </div>
+  );
 }
 
 function Badge({ children }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-medium tracking-wide backdrop-blur-md">
+    <span className="inline-flex items-center rounded-full border border-brand-primary/40 bg-brand-primary/10 px-3 py-1 text-xs font-semibold tracking-wide text-brand-primary">
       {children}
     </span>
   );
@@ -26,10 +45,10 @@ function SectionTitle({ eyebrow, title, desc }) {
           <Badge>{eyebrow}</Badge>
         </div>
       )}
-      <h2 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
+      <h2 className="text-3xl font-bold leading-tight tracking-tight text-brand-secondary sm:text-4xl">
         {title}
       </h2>
-      {desc && <p className="mt-3 text-base text-white/70">{desc}</p>}
+      {desc && <p className="mt-3 text-base text-brand-secondary/70">{desc}</p>}
     </div>
   );
 }
@@ -40,6 +59,21 @@ const navItems = [
   { label: "Personalização", href: "#processo" },
   { label: "Depoimentos", href: "#depoimentos" },
   { label: "Contato", href: "#contato" },
+];
+
+const heroImages = [
+  {
+    src: "/placeholder/hero-jalecos.jpg",
+    alt: "Modelos de jalecos personalizados em manequins",
+  },
+  {
+    src: "/placeholder/cta-jaleco.jpg",
+    alt: "Detalhes de bordado personalizado em jaleco",
+  },
+  {
+    src: "/placeholder/colecao-1.jpg",
+    alt: "Equipe de saúde usando jalecos personalizados",
+  },
 ];
 
 const colecoes = [
@@ -71,15 +105,23 @@ const colecoes = [
 
 function NavBar() {
   return (
-    <div className="sticky top-0 z-40 border-b border-white/10 bg-gradient-to-b from-black/60 to-transparent backdrop-blur-xl">
+    <div className="sticky top-0 z-40 border-b border-brand-complementary bg-white/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between">
         <a href="#hero" className="group inline-flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-black font-bold">PJ</div>
-          <span className="text-sm font-semibold tracking-wide opacity-90 group-hover:opacity-100">Personalize Jalecos</span>
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary text-sm font-bold text-white">
+            PJ
+          </div>
+          <span className="text-sm font-semibold tracking-wide text-brand-secondary group-hover:text-brand-primary">
+            Personalize Jalecos
+          </span>
         </a>
         <nav className="hidden gap-6 md:flex">
           {navItems.map((i) => (
-            <a key={i.href} href={i.href} className="text-sm text-white/80 hover:text-white">
+            <a
+              key={i.href}
+              href={i.href}
+              className="text-sm text-brand-secondary/70 transition hover:text-brand-primary"
+            >
               {i.label}
             </a>
           ))}
@@ -87,11 +129,11 @@ function NavBar() {
         <div className="flex items-center gap-2">
           <a
             href="#contato"
-            className="group inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
+            className="group inline-flex items-center gap-2 rounded-xl bg-brand-primary px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-accent"
           >
-            <Phone className="h-4 w-4"/>
+            <Phone className="h-4 w-4" />
             <span>Fale conosco</span>
-            <ChevronRight className="h-4 w-4 opacity-60 group-hover:translate-x-0.5 transition"/>
+            <ChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
           </a>
         </div>
       </Container>
@@ -100,51 +142,94 @@ function NavBar() {
 }
 
 function Hero() {
-  return (
-    <section id="hero" className="relative overflow-hidden">
-      <Container className="relative py-20 sm:py-28">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto max-w-3xl text-center"
-        >
-          <Badge>Jalecos personalizados com padrão premium</Badge>
-          <h1 className="mt-4 text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
-            Visual profissional que fala por você
-          </h1>
-          <p className="mt-4 text-white/80">
-            Um site institucional com experiência de loja: vitrine moderna, catálogos por coleção e
-            personalização de bordados — sob medida para sua marca e equipe.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a
-              href="#colecoes"
-              className="group inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-black font-semibold shadow-lg hover:shadow-xl"
-            >
-              <ShoppingBag className="h-5 w-5"/>
-              Ver catálogo
-              <ArrowRight className="h-5 w-5 opacity-70 group-hover:translate-x-0.5 transition"/>
-            </a>
-            <a
-              href="#processo"
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 text-white hover:bg-white/10"
-            >
-              <Sparkles className="h-5 w-5"/>
-              Como funciona
-            </a>
-          </div>
-        </motion.div>
+  const [activeIndex, setActiveIndex] = useState(0);
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mt-14 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/0 p-2 shadow-2xl"
-        >
-          <div className="aspect-[16/8] w-full rounded-2xl bg-[url('/placeholder/hero-jalecos.jpg')] bg-cover bg-center" />
-        </motion.div>
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <section
+      id="hero"
+      className="relative overflow-hidden bg-gradient-to-b from-brand-background via-brand-background to-brand-complementary/40"
+    >
+      <Container className="relative py-20 sm:py-28">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-xl"
+          >
+            <div className="flex justify-start">
+              <Badge>Jalecos personalizados com padrão premium</Badge>
+            </div>
+            <h1 className="mt-5 text-4xl font-extrabold leading-tight tracking-tight text-brand-secondary sm:text-6xl">
+              Visual profissional que fala por você
+            </h1>
+            <p className="mt-5 text-lg text-brand-secondary/70">
+              Um site institucional com experiência de loja: vitrine moderna, catálogos por coleção e
+              personalização de bordados — sob medida para sua marca e equipe.
+            </p>
+            <div className="mt-8 flex flex-col items-stretch justify-start gap-3 sm:flex-row">
+              <a
+                href="#colecoes"
+                className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-primary px-5 py-3 text-white shadow-lg transition hover:bg-brand-accent hover:shadow-xl"
+              >
+                <ShoppingBag className="h-5 w-5" />
+                Ver catálogo
+                <ArrowRight className="h-5 w-5 opacity-80 transition group-hover:translate-x-0.5" />
+              </a>
+              <a
+                href="#processo"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-brand-primary/40 px-5 py-3 text-brand-primary transition hover:bg-brand-primary/10"
+              >
+                <Sparkles className="h-5 w-5" />
+                Como funciona
+              </a>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="relative"
+          >
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-lg overflow-hidden rounded-3xl border border-brand-complementary bg-white shadow-2xl">
+              {heroImages.map((image, index) => (
+                <img
+                  key={image.src}
+                  src={image.src}
+                  alt={image.alt}
+                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${
+                    index === activeIndex ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              ))}
+              <div className="absolute inset-x-6 bottom-6 flex items-center justify-center gap-2">
+                {heroImages.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    className={`h-2.5 w-2.5 rounded-full border border-white/60 transition ${
+                      index === activeIndex
+                        ? "bg-brand-primary shadow"
+                        : "bg-white/50 hover:bg-white/80"
+                    }`}
+                    aria-label={`Mostrar imagem ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </Container>
     </section>
   );
@@ -153,23 +238,23 @@ function Hero() {
 function FeatureCards() {
   const features = [
     {
-      icon: <ShieldCheck className="h-6 w-6"/>,
+      icon: <ShieldCheck className="h-6 w-6 text-brand-primary" />,
       title: "Qualidade garantida",
       desc: "Costura reforçada, tecidos premium e controle de qualidade 100% manual.",
     },
     {
-      icon: <Wand2 className="h-6 w-6"/>,
+      icon: <Wand2 className="h-6 w-6 text-brand-primary" />,
       title: "Personalização real",
       desc: "Bordados com seu nome, cargo e logo — alinhamento e cores fiéis.",
     },
     {
-      icon: <Truck className="h-6 w-6"/>,
+      icon: <Truck className="h-6 w-6 text-brand-primary" />,
       title: "Envio ágil",
       desc: "Do pedido ao envio com logística rastreável e prazos transparentes.",
     },
   ];
   return (
-    <section className="border-t border-white/10 bg-white/5 py-14">
+    <section className="border-t border-brand-complementary bg-brand-background py-14">
       <Container>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((f, i) => (
@@ -179,13 +264,13 @@ function FeatureCards() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.05 }}
-              className="group rounded-2xl border border-white/10 bg-gradient-to-b from-white/10 to-transparent p-6 shadow-lg hover:shadow-xl"
+              className="group rounded-2xl border border-brand-complementary bg-white p-6 shadow-sm transition hover:border-brand-primary/60 hover:shadow-lg"
             >
-              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary/10">
                 {f.icon}
               </div>
-              <h3 className="text-lg font-semibold">{f.title}</h3>
-              <p className="mt-1 text-sm text-white/70">{f.desc}</p>
+              <h3 className="text-lg font-semibold text-brand-secondary">{f.title}</h3>
+              <p className="mt-1 text-sm text-brand-secondary/70">{f.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -196,7 +281,7 @@ function FeatureCards() {
 
 function Colecoes() {
   return (
-    <section id="colecoes" className="py-20">
+    <section id="colecoes" className="bg-brand-background py-20">
       <Container>
         <SectionTitle
           eyebrow="Catálogo"
@@ -212,23 +297,28 @@ function Colecoes() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg"
+              className="group overflow-hidden rounded-2xl border border-brand-complementary bg-white shadow-sm transition hover:border-brand-primary/60 hover:shadow-lg"
             >
               <div className="relative">
-                <div className="aspect-[4/5] w-full bg-center bg-cover" style={{ backgroundImage: `url(${c.img})`}} />
+                <div
+                  className="aspect-[4/5] w-full bg-cover bg-center"
+                  style={{ backgroundImage: `url(${c.img})` }}
+                />
                 <div className="absolute left-3 top-3">
-                  <span className="rounded-full bg-white text-black px-2 py-1 text-xs font-semibold shadow">{c.tag}</span>
+                  <span className="rounded-full bg-brand-primary px-2 py-1 text-xs font-semibold text-white shadow">
+                    {c.tag}
+                  </span>
                 </div>
               </div>
               <div className="p-4">
-                <div className="flex items-center gap-2 text-sm text-white/70">
-                  <BadgeCheck className="h-4 w-4"/>
+                <div className="flex items-center gap-2 text-sm text-brand-secondary/60">
+                  <BadgeCheck className="h-4 w-4 text-brand-primary" />
                   Produção própria
                 </div>
-                <h3 className="mt-1 text-lg font-semibold">{c.title}</h3>
-                <p className="mt-1 text-sm text-white/70 line-clamp-2">{c.desc}</p>
-                <div className="mt-3 inline-flex items-center gap-1 text-sm text-white/80 group-hover:gap-2 transition-all">
-                  Solicitar orçamento <ChevronRight className="h-4 w-4"/>
+                <h3 className="mt-1 text-lg font-semibold text-brand-secondary">{c.title}</h3>
+                <p className="mt-1 text-sm text-brand-secondary/70 line-clamp-2">{c.desc}</p>
+                <div className="mt-3 inline-flex items-center gap-1 text-sm text-brand-primary transition group-hover:gap-2">
+                  Solicitar orçamento <ChevronRight className="h-4 w-4" />
                 </div>
               </div>
             </motion.a>
@@ -241,26 +331,31 @@ function Colecoes() {
 
 function CTA() {
   return (
-    <section className="relative py-20">
+    <section className="relative bg-brand-background py-20">
       <Container>
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-white/10 to-transparent p-8 sm:p-12">
+        <div className="overflow-hidden rounded-3xl border border-brand-primary/30 bg-brand-primary p-8 text-white shadow-lg sm:p-12">
           <div className="grid items-center gap-8 md:grid-cols-2">
             <div>
               <h3 className="text-2xl font-bold">Eleve o visual da sua equipe hoje</h3>
-              <p className="mt-2 text-white/80">
-                Fale com um consultor para receber um orçamento com base nas suas preferências de
-                modelo, tecido e personalização.
+              <p className="mt-2 text-white/90">
+                Fale com um consultor para receber um orçamento com base nas suas preferências de modelo, tecido e personalização.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <a href="#contato" className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-black font-semibold shadow">
-                  <Phone className="h-5 w-5"/> Solicitar orçamento
+                <a
+                  href="#contato"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-brand-secondary shadow transition hover:bg-brand-complementary"
+                >
+                  <Phone className="h-5 w-5" /> Solicitar orçamento
                 </a>
-                <a href="#colecoes" className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/5 px-5 py-3 hover:bg-white/10">
-                  <Shirt className="h-5 w-5"/> Ver coleções
+                <a
+                  href="#colecoes"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-white/70 px-5 py-3 text-white transition hover:border-white hover:bg-white/10"
+                >
+                  <Shirt className="h-5 w-5" /> Ver coleções
                 </a>
               </div>
             </div>
-            <div className="aspect-[16/10] w-full rounded-2xl bg-[url('/placeholder/cta-jaleco.jpg')] bg-cover bg-center"/>
+            <div className="aspect-[16/10] w-full rounded-2xl bg-[url('/placeholder/cta-jaleco.jpg')] bg-cover bg-center" />
           </div>
         </div>
       </Container>
@@ -268,18 +363,68 @@ function CTA() {
   );
 }
 
-export default function App() {
-  React.useEffect(() => {
-    document.documentElement.classList.add("bg-black", "text-white");
-  }, []);
-
+function Footer() {
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,rgba(0,0,0,1)_0%,rgba(10,12,18,1)_40%,rgba(12,14,22,1)_100%)]">
+    <footer id="contato" className="border-t border-brand-complementary bg-brand-background py-12">
+      <Container className="grid gap-10 md:grid-cols-[1.2fr_1fr]">
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-primary text-sm font-bold text-white">
+              PJ
+            </div>
+            <div>
+              <p className="text-base font-semibold text-brand-secondary">Personalize Jalecos</p>
+              <p className="text-sm text-brand-secondary/70">Jalecos e scrubs personalizados para equipes que inspiram confiança.</p>
+            </div>
+          </div>
+          <div className="mt-6 grid gap-3 text-sm text-brand-secondary/70">
+            <p className="flex items-center gap-2">
+              <Phone className="h-4 w-4 text-brand-primary" /> (11) 99999-9999
+            </p>
+            <p className="flex items-center gap-2">
+              <Mail className="h-4 w-4 text-brand-primary" /> contato@personalizejalecos.com
+            </p>
+            <p className="flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-brand-primary" /> São Paulo, SP
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-6">
+          <div>
+            <h4 className="text-sm font-semibold uppercase tracking-wide text-brand-secondary">Siga a Personalize</h4>
+            <div className="mt-3 flex gap-3">
+              <a
+                href="https://instagram.com"
+                className="inline-flex items-center gap-2 rounded-full border border-brand-complementary px-4 py-2 text-sm text-brand-secondary/70 transition hover:border-brand-primary/60 hover:text-brand-primary"
+              >
+                <Instagram className="h-4 w-4" /> Instagram
+              </a>
+              <a
+                href="https://facebook.com"
+                className="inline-flex items-center gap-2 rounded-full border border-brand-complementary px-4 py-2 text-sm text-brand-secondary/70 transition hover:border-brand-primary/60 hover:text-brand-primary"
+              >
+                <Facebook className="h-4 w-4" /> Facebook
+              </a>
+            </div>
+          </div>
+          <p className="text-xs text-brand-secondary/60">
+            © {new Date().getFullYear()} Personalize Jalecos. Todos os direitos reservados.
+          </p>
+        </div>
+      </Container>
+    </footer>
+  );
+}
+
+export default function App() {
+  return (
+    <div className="min-h-screen bg-brand-background text-brand-secondary">
       <NavBar />
       <Hero />
       <FeatureCards />
       <Colecoes />
       <CTA />
+      <Footer />
     </div>
   );
 }
